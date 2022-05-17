@@ -23,7 +23,16 @@ HugeInt* substractHugeInt (const HugeInt* operand1, const HugeInt* operand2) {
 }
 
 HugeInt* multiplyHugeInt (const HugeInt* operand1, const HugeInt* operand2) {
-    return NULL;
+    HugeInt* result = createHugeInt ();
+    if (result != NULL) {
+        result->absoluteValue = multiplyHugeUnsignedInt (operand1->absoluteValue, operand2->absoluteValue);
+        if (operand1->sign == operand2->sign) {
+            result->sign = PLUS;
+        } else {
+            result->sign = MINUS;
+        }
+    }
+    return result;
 }
 
 HugeInt* divideHugeInt (const HugeInt* operand1, const HugeInt* operand2) {
