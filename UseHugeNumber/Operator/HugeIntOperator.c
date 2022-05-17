@@ -19,33 +19,19 @@ HugeInt* addHugeInt (const HugeInt* operand1, const HugeInt* operand2) {
 }
 
 HugeInt* substractHugeInt (const HugeInt* operand1, const HugeInt* operand2) {
-    HugeInt* exponentDifference = substractHugeInt (operand1->exponent, operand2->exponent);
-    HugeFloat* result = createHugeFloat ();
-    if (result != NULL) {
-        HugeInt* tempOperand = createHugeInt ();
-        if (tempOperand == NULL) {
-            return NULL;
-        }
-        HugeInt* tempPowerOf10 = createHugeInt ();
-        if (tempPowerOf10 == NULL) {
-            return NULL;
-        }
-        tempPowerOf10->absoluteValue = createHugeUnsignedIntFromPowerOf10 (exponentDifference->absoluteValue);
-        tempPowerOf10->sign = PLUS;
-        if (exponentDifference->sign == PLUS) {
-            tempOperand = multiplyHugeInt (operand1->significand, tempPowerOf10);
-            result->significand = addHugeInt (tempOperand, operand2->significand);
-            result->exponent = createHugeIntFromHugeInt (operand2->exponent, 0);
-        } else {
-            tempOperand = multiplyHugeInt (operand2->significand, tempPowerOf10);
-            result->significand = addHugeInt (tempOperand, operand1->significand);
-            result->exponent = createHugeIntFromHugeInt (operand1->exponent, 0);
-        }
-        deleteHugeInt (tempPowerOf10);
-        deleteHugeInt (tempOperand);
-        deleteHugeInt (exponentDifference);
+    HugeInt* result;
+    HugeInt* tmpOperand2 = createHugeIntFromHugeInt (operand2, 0);
+
+    if (tmpOperand2 == NULL) {
+        return NULL;
     }
-    simplifyHugeFloat (result);
+    if (tmpOperand2->sign == PLUS) {
+        tmpOperand2->sign = MINUS;
+    } else {
+        tmpOperand2->sign = PLUS;
+    }
+    result = addHugeInt (operand1, tmpOperand2);
+    deleteHugeInt (tmpOperand2);
     return result;
 }
 
