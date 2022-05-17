@@ -2,7 +2,20 @@
 #include "HugeIntOperator.h"
 
 HugeInt* addHugeInt (const HugeInt* operand1, const HugeInt* operand2) {
-    return NULL;
+    HugeInt* result;
+    if (operand1->sign == operand2->sign) {
+        result = createHugeInt ();
+        if (result == NULL) {
+            return NULL;
+        }
+        result->absoluteValue = addHugeUnsignedInt (operand1->absoluteValue, operand2->absoluteValue);
+        result->sign = operand1->sign;
+    } else if (operand1->sign == PLUS) {
+        result = substractHugeUnsignedInt (operand1->absoluteValue, operand2->absoluteValue);
+    } else {
+        result = substractHugeUnsignedInt (operand2->absoluteValue, operand1->absoluteValue);
+    }
+    return result;
 }
 
 HugeInt* substractHugeInt (const HugeInt* operand1, const HugeInt* operand2) {

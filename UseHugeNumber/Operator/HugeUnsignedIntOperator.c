@@ -8,7 +8,30 @@
 static unsigned int compareHugeUnsignedInts (const HugeUnsignedInt* operand1, const HugeUnsignedInt* operand2);
 
 HugeUnsignedInt* addHugeUnsignedInt (const HugeUnsignedInt* operand1, const HugeUnsignedInt* operand2) {
-    return NULL;
+    HugeUnsignedInt* result = createHugeUnsignedInt ();
+
+    if (result != NULL) {
+        Node* node1 = operand1->end;
+        Node* node2 = operand2->end;
+        Digit carry = 0;
+        while (!isNodeEmpty (node1) || !isNodeEmpty (node2)) {
+            Digit digitNode1 = isNodeEmpty (node1) ? 0 : node1->digit;
+            Digit digitNode2 = isNodeEmpty (node2) ? 0 : node2->digit;
+            Digit digitResult = (digitNode1 + digitNode2 + carry) % 10;
+            carry = (digitNode1 + digitNode2 + carry) / 10;
+            addDigitAtStart (result, digitResult);
+            if (!isNodeEmpty (node1)) {
+                node1 = node1->previous;
+            }
+            if (!isNodeEmpty (node2)) {
+                node2 = node2->previous;
+            }
+        }
+        if (carry > 0) {
+            addDigitAtStart (result, carry);
+        }
+    }
+    return result;
 }
 
 HugeInt* substractHugeUnsignedInt (const HugeUnsignedInt* operand1, const HugeUnsignedInt* operand2) {
