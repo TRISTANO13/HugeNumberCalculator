@@ -33,6 +33,20 @@ HugeFloat* multiplyHugeFloat (const HugeFloat* operand1, const HugeFloat* operan
     return result;
 }
 
-HugeFloat* simplifyHugeFloat (const HugeFloat* hugeFloat) {
-    return NULL;
+HugeFloat* simplifyHugeFloat (HugeFloat* hugeFloat) {
+    if (hugeFloat != NULL) {
+        simplifyHugeInt (hugeFloat->significand);
+        simplifyHugeInt (hugeFloat->exponent);
+        char simplify = 1;
+        while ((!isNodeEmpty (hugeFloat->significand->absoluteValue->end)) && simplify) {
+            if ((hugeFloat->significand->absoluteValue->end->digit == 0)
+                && (hugeFloat->significand->absoluteValue->end != hugeFloat->significand->absoluteValue->start)) {
+                removeEndFromDoublyLinkedList (hugeFloat->significand->absoluteValue);
+                incrementHugeUnsignedInt (hugeFloat->exponent->absoluteValue);
+            } else {
+                simplify = 0;
+            }
+        }
+    }
+    return hugeFloat;
 }
