@@ -142,35 +142,106 @@ HugeUnsignedInt* divideHugeUnsignedInt (const HugeUnsignedInt* operand1, const H
 
 
 unsigned int compareHugeUnsignedInts (const HugeUnsignedInt* operand1, const HugeUnsignedInt* operand2) {
-    return 0;
+    if ((operand1 == NULL) && (operand2 == NULL)) {
+        return HUGE_NUMBER_EQUAL;
+    }
+    if (operand1 == NULL) {
+        return HUGE_NUMBER_INFERIOR;
+    }
+    if (operand2 == NULL) {
+        return HUGE_NUMBER_SUPERIOR;
+    }
+    unsigned int operand1Length = getHugeUnsignedIntLength (operand1);
+    unsigned int operand2Length = getHugeUnsignedIntLength (operand2);
+
+    if (operand1Length > operand2Length) {
+        return HUGE_NUMBER_SUPERIOR;
+    }
+    if (operand1Length < operand2Length) {
+        return HUGE_NUMBER_INFERIOR;
+    }
+    Node* nodeOperand1 = operand1->start;
+    Node* nodeOperand2 = operand2->start;
+    int found = 0;
+    while ((!isNodeEmpty (nodeOperand1)) && (found == 0)) {
+        if (nodeOperand1->digit > nodeOperand2->digit) {
+            found = 1;
+        }
+        if (nodeOperand1->digit < nodeOperand2->digit) {
+            found = -1;
+        }
+        nodeOperand1 = nodeOperand1->next;
+        nodeOperand2 = nodeOperand2->next;
+    }
+    switch (found) {
+    case 1:
+        return HUGE_NUMBER_SUPERIOR;
+    case -1:
+        return HUGE_NUMBER_INFERIOR;
+    default:
+        return HUGE_NUMBER_EQUAL;
+    }
 }
 
 unsigned int isHugeUnsignedIntStrictlySuperior (const HugeUnsignedInt* operand1, const HugeUnsignedInt* operand2) {
-    return 0;
+    return compareHugeUnsignedInts (operand1, operand2) == HUGE_NUMBER_SUPERIOR;
 }
 
 unsigned int isHugeUnsignedIntSuperior (const HugeUnsignedInt* operand1, const HugeUnsignedInt* operand2) {
-    return 0;
+    unsigned int result = compareHugeUnsignedInts (operand1, operand2);
+
+    return (result == HUGE_NUMBER_SUPERIOR) || (result == HUGE_NUMBER_EQUAL);
 }
 
 unsigned int isHugeUnsignedIntEqual (const HugeUnsignedInt* operand1, const HugeUnsignedInt* operand2) {
-    return 0;
+    return compareHugeUnsignedInts (operand1, operand2) == HUGE_NUMBER_EQUAL;
 }
 
 unsigned int isHugeUnsignedIntInferior (const HugeUnsignedInt* operand1, const HugeUnsignedInt* operand2) {
-    return 0;
+    unsigned int result = compareHugeUnsignedInts (operand1, operand2);
+
+    return (result == HUGE_NUMBER_INFERIOR) || (result == HUGE_NUMBER_EQUAL);
 }
 
 unsigned int isHugeUnsignedIntStrictlyInferior (const HugeUnsignedInt* operand1, const HugeUnsignedInt* operand2) {
-    return 0;
+    return compareHugeUnsignedInts (operand1, operand2) == HUGE_NUMBER_INFERIOR;
 }
 
 HugeUnsignedInt* createHugeUnsignedIntFromPowerOf10 (const HugeUnsignedInt* exponent) {
-    return NULL;
+    HugeUnsignedInt* hugeUnsignedInt = createHugeUnsignedInt ();
+    if ((hugeUnsignedInt != NULL)) {
+        addDigitAtStart (hugeUnsignedInt, 1);
+        HugeUnsignedInt* i;
+        for (i = createHugeUnsignedIntFromString ("0"); isHugeUnsignedIntStrictlyInferior (i, exponent); incrementHugeUnsignedInt (i)) {
+            addDigitAtEnd (hugeUnsignedInt, 0);
+        }
+        deleteHugeUnsignedInt (i);
+    }
+    return hugeUnsignedInt;
 }
 
 void incrementHugeUnsignedInt (HugeUnsignedInt* hugeUnsignedInt) {
+    if (hugeUnsignedInt != NULL) {
+        HugeUnsignedInt* hugeUnsignedOne = createHugeUnsignedIntFromString ("1");
+        HugeUnsignedInt* temp = addHugeUnsignedInt (hugeUnsignedInt, hugeUnsignedOne);
+        while (hugeUnsignedInt->start != NULL) {
+            hugeUnsignedInt->start = hugeUnsignedInt->start->next;
+         }
+        hugeUnsignedInt->start = temp->start;
+        hugeUnsignedInt->end = temp->end;
+        free (temp);
+    }
 }
 
 void decrementHugeUnsignedInt (HugeUnsignedInt* hugeUnsignedInt) {
+    if (hugeUnsignedInt != NULL) {
+        HugeUnsignedInt* hugeUnsignedOne = createHugeUnsignedIntFromString ("1");
+        HugeInt* temp = substractHugeUnsignedInt (hugeUnsignedInt, hugeUnsignedOne);
+        while (hugeUnsignedInt->start != NULL) {
+            hugeUnsignedInt->start = hugeUnsignedInt->start->next;
+        }
+        hugeUnsignedInt->start = temp->absoluteValue->start;
+        hugeUnsignedInt->end = temp->absoluteValue->end;
+        free (temp);
+    }
 }
